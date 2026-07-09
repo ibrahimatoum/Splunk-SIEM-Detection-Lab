@@ -1,0 +1,10 @@
+# Detection: Brute-Force / Password-Spray via Failed Logons
+# Data source: Windows Security Event Log (Event ID 4625)
+# Logic: Flags 5+ failed logons against the analyst account within a 5-minute window
+# MITRE ATT&CK: T1110 (Brute Force)
+
+index=wineventlog EventCode=4625 Account_Name="analyst"
+| bin _time span=5m
+| stats count as failed_attempts by _time
+| where failed_attempts >= 5
+| sort -_time
